@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
 
 class AuthController extends Controller
 {
@@ -17,10 +18,13 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register() {
+
+        Gate::authorize('create', User::class);
+
         $validator = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed|min:8',
+            'password' => 'required|min:8',
         ]);
 
         if($validator->fails()){
@@ -49,6 +53,8 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+
 
         return $this->respondWithToken($token);
     }
@@ -97,7 +103,16 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => [
+                'full_name' => auth()->user()->name. ' '. auth()->user()->surname,
+                'email' => auth()->user()->email,
+                'foto' => auth()->user()->foto ? env('APP_URL').'/storage/users/'.auth()->user()->foto : null,
+                'role' => [
+                    'id' => auth()->user()->role->id,
+                    'name' => auth()->user()->role->name,
+                ]
+            ]
         ]);
     }
 }

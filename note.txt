@@ -1,3 +1,9 @@
 
 datos para el acceso a la base de datos de postgresql
-docker run -d --name inventary_mysql --network inventary_net -e MYSQL_DATABASE=db_inventary -e MYSQL_USER=admin -e MYSQL_PASSWORD=Bigote2020 -e MYSQL_ROOT_PASSWORD=!!Bigote2020 -p 3306:3306 -v inventary_mysql_data:/var/lib/mysql mysql:8.0
+docker run -d --name inventary_mysql --network inventary_net
+-e MYSQL_DATABASE=db_inventary
+-e MYSQL_USER=admin
+-e MYSQL_PASSWORD=Bigote2020
+-e MYSQL_ROOT_PASSWORD=!!Bigote2020
+-p 3306:3306
+-v inventary_mysql_data:/var/lib/mysql mysql:8.0
