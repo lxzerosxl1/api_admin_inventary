@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+// use App\Models\Sede;
 use Spatie\Permission\PermissionRegistrar;
 
 class PermissionsDemoSeeder extends Seeder
@@ -68,9 +69,27 @@ class PermissionsDemoSeeder extends Seeder
         $role3 = Role::create(['guard_name' => 'api','name' => 'Super-Admin']);
         // gets all permissions via Gate::before rule; see AuthServiceProvider
 
+        $sede = \App\Models\Sede::create([
+            'name' => 'Sede 1',
+            'descripcion' => 'Sede 1',
+            'pais' => 'Peru',
+            'departamento' => 'Lima',
+            'provincia' => 'Lima',
+            'distrito' => 'Lima',
+            'direccion' => 'Lima',
+            'referencia' => 'Lima',
+            'nota' => 'Lima',
+            'activo' => true
+        ]);
+
         $user = \App\Models\User::factory()->create([
             'name' => 'Super-Admin-Luis',
             'apellido' => 'Quispe Salinas',
+            'sede_id' => $sede->id,
+            'tipo_documento' => 'DNI',
+            'numero_documento' => '00000000',
+            'genero' => 'M',
+            'telefono' => '00000000',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('123456'),
             'role_id' => $role3->id

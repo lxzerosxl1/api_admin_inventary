@@ -23,11 +23,16 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'name',
+        'role_id',
+        'sede_id',
+        'tipo_documento',
+        'numero_documento',
+        'apellido',
+        'genero',
+        'telefono',
         'email',
         'password',
-        'surname',
         'foto',
-        'role_id'
     ];
 
     /**
@@ -76,5 +81,10 @@ class User extends Authenticatable implements JWTSubject
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function sede()
+    {
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 }

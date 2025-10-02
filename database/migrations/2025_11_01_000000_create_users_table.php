@@ -21,9 +21,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->bigInteger('role_id')->unsigned();
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+            $table->bigInteger('sede_id')->unsigned();
+            $table->foreign('sede_id')->references('id')->on('sedes')->onDelete('cascade');
+            $table->string('tipo_documento',10)->default('DNI');
+            $table->string('numero_documento',20)->default('00000000');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 
