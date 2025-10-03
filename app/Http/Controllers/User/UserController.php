@@ -6,11 +6,32 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Sede;
 use Spatie\Permission\Models\Role;
 
 
 class UserController extends Controller
 {
+
+    public function config()
+    {
+        $sedes = Sede::all();
+        $roles = Role::all();
+        return response()->json([
+            "sedes" => $sedes->map(function ($sede) {
+                return [
+                    "id" => $sede->id,
+                    "name" => $sede->name,
+                ];
+            }),
+            "roles" => $roles->map(function ($role) {
+                return [
+                    "id" => $role->id,
+                    "name" => $role->name,
+                ];
+            }),
+        ]);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -29,6 +50,7 @@ class UserController extends Controller
                     "fullname" => $user->name . " " . $user->apellido,
                     "genero" => $user->genero,
                     "telefono" => $user->telefono,
+                    "estado" => $user->estado,
                     "email" => $user->email,
                     "role_id" => $user->role_id,
                     "role" => [
@@ -41,7 +63,7 @@ class UserController extends Controller
                     "tipo_documento" => $user->tipo_documento,
                     "numero_documento" => $user->numero_documento,
                     "foto" => $user->foto ? env('APP_URL') . '/storage/' . $user->foto : null,
-                    "created_at" => $user->created_at->format('Y-m-d A h:i'),
+                    "created_at" => $user->created_at->format('Y-m-d h:i A'),
                 ];
             })
         ]);
@@ -85,6 +107,7 @@ class UserController extends Controller
                 "fullname" => $user->name . " " . $user->apellido,
                 "genero" => $user->genero,
                 "telefono" => $user->telefono,
+                "estado" => $user->estado,
                 "email" => $user->email,
                 "role_id" => $user->role_id,
                 "role" => [
@@ -97,7 +120,7 @@ class UserController extends Controller
                 "tipo_documento" => $user->tipo_documento,
                 "numero_documento" => $user->numero_documento,
                 "foto" => $user->foto ? env('APP_URL') . '/storage/' . $user->foto : null,
-                "created_at" => $user->created_at->format('Y-m-d A h:i'),
+                "created_at" => $user->created_at->format('Y-m-d h:i A'),
             ]
         ]);
 
@@ -159,6 +182,7 @@ class UserController extends Controller
                 "fullname" => $user->name . " " . $user->apellido,
                 "genero" => $user->genero,
                 "telefono" => $user->telefono,
+                "estado" => $user->estado,
                 "email" => $user->email,
                 "role_id" => $user->role_id,
                 "role" => [
@@ -171,7 +195,7 @@ class UserController extends Controller
                 "tipo_documento" => $user->tipo_documento,
                 "numero_documento" => $user->numero_documento,
                 "foto" => $user->foto ? env('APP_URL') . '/storage/' . $user->foto : null,
-                "created_at" => $user->created_at->format('Y-m-d A h:i'),
+                "created_at" => $user->created_at->format('Y-m-d h:i A'),
             ]
         ]);
     }

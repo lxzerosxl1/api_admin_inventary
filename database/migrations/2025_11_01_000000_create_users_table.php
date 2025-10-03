@@ -13,20 +13,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('tipo_documento',10)->default('DNI');
+            $table->string('numero_documento',20)->default('00000000');
             $table->string('name');
             $table->string('apellido');
-            $table->string('genero',1)->default('M');
-            $table->string('telefono',100)->nullable();
-            $table->string('foto')->nullable();
-            $table->string('email')->unique();
             $table->bigInteger('role_id')->unsigned();
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->bigInteger('sede_id')->unsigned();
             $table->foreign('sede_id')->references('id')->on('sedes')->onDelete('cascade');
-            $table->string('tipo_documento',10)->default('DNI');
-            $table->string('numero_documento',20)->default('00000000');
+            $table->string('genero',1)->default('M');
+            $table->string('telefono',100)->nullable();
+            $table->string('foto')->nullable();
+            $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('estado')->default(true);
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
