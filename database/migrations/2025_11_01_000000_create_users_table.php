@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->bigInteger('sede_id')->unsigned();
             $table->foreign('sede_id')->references('id')->on('sedes')->onDelete('cascade');
+            $table->string('cargo')->nullable();
             $table->string('genero',1)->default('M');
             $table->string('telefono',100)->nullable();
             $table->string('foto')->nullable();

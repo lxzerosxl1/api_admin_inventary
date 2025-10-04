@@ -100,19 +100,39 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $permissions = auth('api')->user()->getAllPermissions()->map(function($permission) {
+            return $permission->name;
+        });
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => [
-                'full_name' => auth()->user()->name. ' '. auth()->user()->apellidos,
-                'email' => auth()->user()->email,
-                'foto' => auth()->user()->foto ? env('APP_URL').'/storage/users/'.auth()->user()->foto : null,
-                'role' => [
-                    'id' => auth()->user()->role->id,
-                    'name' => auth()->user()->role->name,
-                ]
+            'expires_in' => auth('api')->factory()->getTTL() * 300,
+            "user" => [
+                "full_name" => auth('api')->user()->name.' '.auth('api')->user()->apellidos,
+                "email" => auth('api')->user()->email,
+                "foto" => auth('api')->user()->foto ? env("APP_URL")."storage/".auth('api')->user()->foto : NULL,
+                "role" => [
+                    "id" => auth('api')->user()->role->id,
+                    "name" => auth('api')->user()->role->name
+                ],
+                "permissions" => $permissions,
             ]
         ]);
+        //este codigo estaba antes de copiar el codigo del proyecto
+        // return response()->json([
+        //     'access_token' => $token,
+        //     'token_type' => 'bearer',
+        //     'expires_in' => auth()->factory()->getTTL() * 60,
+        //     'user' => [
+        //         'full_name' => auth()->user()->name. ' '. auth()->user()->apellidos,
+        //         'email' => auth()->user()->email,
+        //         'foto' => auth()->user()->foto ? env('APP_URL').'/storage/users/'.auth()->user()->foto : null,
+        //         'role' => [
+        //             'id' => auth()->user()->role->id,
+        //             'name' => auth()->user()->role->name,
+        //         ],
+        //         "permissions" => $permissions,
+        //     ]
+        // ]);
     }
 }

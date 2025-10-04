@@ -27,7 +27,8 @@ class RoleController extends Controller
                             'id' => $permission->id,
                             'name' => $permission->name
                         ];
-                    })
+                    }),
+                    "permissions_pluck" => $role->permissions->pluck('name'),
                 ];
             })
         ]);
@@ -39,6 +40,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $exist_role = Role::where('name', $request->name)->first();
+
         if ($exist_role) {
             return response()->json([
                 'message' => 403,
@@ -51,9 +53,9 @@ class RoleController extends Controller
             'guard_name' => 'api'
         ]);
 
-        // Enlazar con los permisos que tenga
         $permissions = $request->permissions;
 
+        // Enlazar con los permisos que tenga
         foreach ($permissions as $key => $permission) {
             $role->givePermissionTo($permission);
         }
@@ -63,7 +65,7 @@ class RoleController extends Controller
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,
-                'created_at' => $role->created_at->format('Y/m/d H:i:s'),
+                'created_at' => $role->created_at->format('Y/m/d h:i:s'),
                 'permissions_pluck' => $role->permissions->pluck('name'),
                 'permissions' => $role->permissions->map(function ($permission){
                     return [
@@ -105,9 +107,8 @@ class RoleController extends Controller
         $permissions = $request->permissions;
         $role->syncPermissions($permissions);
 
-
         return response()->json([
-            'message' => 'Rol actualizado correctamente',
+            'message' => 200,
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,
@@ -131,7 +132,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($id);
         $role->delete();
         return response()->json([
-            'message' => 'Rol eliminado correctamente'
-        ], 201);
+            'message' => 200,
+        ]);
     }
 }
