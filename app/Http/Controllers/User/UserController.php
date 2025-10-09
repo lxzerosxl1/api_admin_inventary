@@ -39,7 +39,14 @@ class UserController extends Controller
     {
         $search = $request->get("search");
 
-        $users = User::where("name", "LIKE", "%{$search}%")->get();
+        // $users = User::where("name", "LIKE", "%{$search}%")->orderBy("id", "DESC")->get();
+        $users = User::where('name', 'LIKE', "%{$search}%")
+            ->orWhere('numero_documento', 'LIKE', "%{$search}%")
+            ->orWhere('apellido', 'LIKE', "%{$search}%")
+            ->orWhere('email', 'LIKE', "%{$search}%")
+            ->orWhere('cargo', 'LIKE', "%{$search}%")
+            ->orderBy("id", "DESC")
+            ->get();
 
         return response()->json([
             "users" => $users->map(function ($user) {
@@ -52,6 +59,7 @@ class UserController extends Controller
                     "telefono" => $user->telefono,
                     "estado" => $user->estado,
                     "email" => $user->email,
+                    "cargo" => $user->cargo,
                     "role_id" => $user->role_id,
                     "role" => [
                         "name" => $user->role->name,
@@ -83,16 +91,24 @@ class UserController extends Controller
             ]);
         }
 
-        if($request->hasFile("foto")) {
-            $path = Storage::putFile('users', $request->file('foto'));
-            $request->request->add(['foto' => $path]);
-        }
-
         if($request->password) {
             $request->request->add(['password' => bcrypt($request->password)]);
         }
 
         $user = User::create($request->all());
+
+        if($request->hasFile("foto")) {
+            $foto = $request->file('foto');
+            $nombreArchivo = time() . '_user_' . $user->id . '.' . $foto->getClientOriginalExtension();
+            $ruta = $foto->storeAs('users', $nombreArchivo, 'public');
+            $user->foto = $ruta;
+            $user->save();
+        } else {
+            $user->foto = null;
+            $user->save();
+        }
+
+        // $user = User::create($request->all());
         $rol = Role::findOrFail($request->role_id);
 
         $user->assignRole($rol);
@@ -123,7 +139,6 @@ class UserController extends Controller
                 "created_at" => $user->created_at->format('Y-m-d h:i A'),
             ]
         ]);
-
     }
 
     /**
