@@ -100,22 +100,24 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-        $permissions = auth('api')->user()->getAllPermissions()->map(function($permission) {
-            return $permission->name;
-        });
+        $user = auth('api')->user();
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 300,
             "user" => [
-                "full_name" => auth('api')->user()->name.' '.auth('api')->user()->apellidos,
-                "email" => auth('api')->user()->email,
-                "foto" => auth('api')->user()->foto ? env("APP_URL")."storage/".auth('api')->user()->foto : NULL,
+                "full_name" => $user->name.' '.$user->apellido,
+                "email" => $user->email,
+                "cargo" => $user->cargo,
+                "foto" => $user->foto ? env("APP_URL")."storage/".$user->foto : NULL,
                 "role" => [
-                    "id" => auth('api')->user()->role->id,
-                    "name" => auth('api')->user()->role->name
+                    "id" => $user->role->id,
+                    "name" => $user->role->name
                 ],
-                "permissions" => $permissions,
+                "permissions" => $user->role->permissions->map(function($permission) {
+                    return $permission->name;
+                })->toArray(),
             ]
         ]);
         //este codigo estaba antes de copiar el codigo del proyecto
